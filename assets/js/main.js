@@ -3,6 +3,7 @@ const $$ = document.querySelectorAll.bind(document);
 
 // input
 const searchText = $('.search-text');
+const searchBtn = $('.search_btn');
 
 // render city
 const countryName = $('.country-name');
@@ -46,8 +47,6 @@ const navIcon = $$('.nav_icon');
 const chartHour = $$('.chart_hour');
 const chartItemIcon = $$('.chart_item-icon');
 const chartTemp = $$('.chart_temp');
-
-console.log(chartTemp);
 
 // test
 const weatherIcon = $('.weather-icon');
@@ -130,12 +129,12 @@ const app = {
             })
             .then((forecastData) => {
                 // log
-                console.group('data');
-                console.log('data: ');
-                console.log(data);
-                console.log('forecast: ');
-                console.log(forecastData);
-                console.groupEnd();
+                // console.group('data');
+                // console.log('data: ');
+                // console.log(data);
+                // console.log('forecast: ');
+                // console.log(forecastData);
+                // console.groupEnd();
 
                 // props
                 const cityData = forecastData.city;
@@ -218,7 +217,6 @@ const app = {
 
                     // icon
 
-                    console.log(weatherChart[0].main);
                     switch (weatherChart[0].main) {
                         case 'Rain':
                             chartItemIcon[i].innerHTML = weatherIconLists.rain.icon;
@@ -229,9 +227,14 @@ const app = {
                             chartItemIcon[i].innerHTML = weatherIconLists.cloud.icon;
                             chartItemIcon[i].classList.add('cloud_icon');
                             break;
+                        case 'Snow':
+                            chartItemIcon[i].innerHTML = weatherIconLists.snowWeather.icon;
+                            chartItemIcon[i].classList.add('snow_icon');
+                            break;
 
                         default:
                             chartItemIcon[i].innerHTML = weatherIconLists.sunCloud.icon;
+                            chartItemIcon[i].classList.add('sun_cloud_icon');
                             break;
                     }
 
@@ -245,7 +248,7 @@ const app = {
     handleInput: function () {
         searchText.addEventListener('keyup', (e) => {
             if (e.keyCode === 13) {
-                const value = searchText.value;
+                const value = searchText.value.trim();
                 this.renderSearch(value);
                 searchText.value = '';
             }
@@ -349,6 +352,13 @@ const app = {
                 this.handleToast(types.update);
             });
         }
+
+        // searchInput
+        searchBtn.addEventListener('click', () => {
+            const textValue = searchText.value.trim();
+            this.renderSearch(textValue);
+            searchText.value = '';
+        });
 
         // toggle dark mode
         const toggleDarkModeBtn = navIcon[5];

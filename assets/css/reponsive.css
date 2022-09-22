@@ -85,6 +85,10 @@
         justify-content: center;
     }
 
+    .weather_day-forecast {
+        margin: 16px;
+    }
+
     .weather-temp-title {
         text-align: center;
     }
@@ -95,5 +99,6 @@
 
     #forecast {
         margin-left: 0;
+        margin: 16px;
     }
 }
