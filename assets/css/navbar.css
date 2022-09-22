@@ -48,6 +48,7 @@
 
 .nav_icon:hover::after {
     display: block;
+    transition: all 0.3s ease;
 }
 
 .nav_icon::after {

@@ -39,30 +39,73 @@ const y = window.matchMedia('(max-width: 610px)');
 // toast
 const toastMain = document.getElementById('toast');
 
+// click nav
+const navIcon = $$('.nav_icon');
+
+// chart
+const chartHour = $$('.chart_hour');
+const chartItemIcon = $$('.chart_item-icon');
+const chartTemp = $$('.chart_temp');
+
+console.log(chartTemp);
+
 // test
 const weatherIcon = $('.weather-icon');
 
-console.log(weatherIcon);
+// snowfall
+const snow = document.getElementById('snow');
 
 // toast info
 const types = {
     success: {
         type: 'success',
         title: 'Success',
-        desc: 'Load thanh cong',
         icon: 'check',
+        findReport: 'Đã load khu vực thành công',
     },
     error: {
         type: 'error',
         title: 'error',
-        desc: 'Tính năng đang cập nhật',
+        icon: 'xmark',
+        findReport: 'Không tìm thấy vùng cần tìm!',
+    },
+    update: {
+        type: 'update',
+        title: 'update',
         icon: 'exclamation',
-        findError: 'Không tìm thấy vùng cần tìm!',
+        findReport: 'Tính năng đang cập nhật',
     },
 };
 
+// weather-icon
+const weatherIconLists = {
+    sunCloud: {
+        icon: '<i class="fa-solid fa-cloud-sun"></i>',
+        class: 'sun_cloud_icon',
+        bgImage: 'https://media.giphy.com/media/jMf1y3bfDMPFA9eFrJ/giphy.gif',
+    },
+    cloud: {
+        icon: '<i class="fa-solid fa-cloud"></i>',
+        class: 'cloud_icon',
+        bgImage: 'https://i.pinimg.com/736x/23/3b/43/233b434cf3aa7027ef5670f34c6527cc.jpg',
+    },
+    rain: {
+        icon: '<i class="fa-solid fa-cloud-rain"></i>',
+        class: 'rain_icon',
+        bgImage: 'https://media.giphy.com/media/3osxYzIQRqN4DOEddC/giphy.gif',
+    },
+    snowWeather: {
+        icon: '<i class="fa-regular fa-snowflake"></i>',
+        class: 'snow_icon',
+        bgImage: 'https://media.giphy.com/media/PkaZUCdVm2c5G/giphy.gif',
+    },
+};
+
+// App
 const app = {
     apiKey: '3951debfc7837f0ed4957d5c6361c419',
+    darkMode: false,
+    snowLength: 50,
 
     render: function () {
         if (navigator.geolocation) {
@@ -99,6 +142,7 @@ const app = {
                 const mainData = data.main;
                 const statusData = data.weather[0];
                 const windData = data.wind;
+                const chartList = forecastData.list;
 
                 // render city
                 countryName.innerText = cityData.name;
@@ -120,6 +164,25 @@ const app = {
                     item.innerText = statusData.description;
                 });
 
+                // render bg follow weather
+                switch (statusData.main) {
+                    case 'Clouds':
+                        weatherStatus.style.backgroundImage = `url(${weatherIconLists.cloud.bgImage})`;
+                        break;
+
+                    case 'Rain':
+                        weatherStatus.style.backgroundImage = `url(${weatherIconLists.rain.bgImage})`;
+                        break;
+
+                    case 'Snow':
+                        weatherStatus.style.backgroundImage = `url(${weatherIconLists.snowWeather.bgImage})`;
+                        break;
+
+                    default:
+                        weatherStatus.style.backgroundImage = `url(${weatherIconLists.sunCloud.bgImage})`;
+                        break;
+                }
+
                 // render wind-speed
                 const windSpeed = Math.floor((windData.speed * 18) / 5);
                 windDirection.innerText = `${windSpeed}km`;
@@ -138,6 +201,43 @@ const app = {
                 windValue.innerText = `${cloudPecent}%`;
                 windPercent.style.left = `calc(${cloudPecent}% - 18px)`;
                 windBlockPercent.style.width = `${cloudPecent}%`;
+
+                // chart
+
+                for (let i = 0; i <= 5; i++) {
+                    const dtTime = chartList[i].dt;
+                    const weatherChart = chartList[i].weather;
+                    const tempChart = chartList[i].main;
+
+                    const time = new Date(dtTime * 1000);
+                    const hour = time.getHours();
+                    const temp = Math.floor(tempChart.temp - 273);
+
+                    // time
+                    chartHour[i].innerText = `${hour < 10 ? '0' + hour : hour}`;
+
+                    // icon
+
+                    console.log(weatherChart[0].main);
+                    switch (weatherChart[0].main) {
+                        case 'Rain':
+                            chartItemIcon[i].innerHTML = weatherIconLists.rain.icon;
+                            chartItemIcon[i].classList.add('rain_icon');
+                            break;
+
+                        case 'Clouds':
+                            chartItemIcon[i].innerHTML = weatherIconLists.cloud.icon;
+                            chartItemIcon[i].classList.add('cloud_icon');
+                            break;
+
+                        default:
+                            chartItemIcon[i].innerHTML = weatherIconLists.sunCloud.icon;
+                            break;
+                    }
+
+                    // temp
+                    chartTemp[i].innerHTML = `${temp}<sup>o</sup>C`;
+                }
             });
     },
 
@@ -165,6 +265,7 @@ const app = {
                         this.handleToast(types.error);
                         return;
                     }
+                    this.handleToast(types.success);
                     this.weatherReport(searchData);
                 });
         }
@@ -198,16 +299,12 @@ const app = {
                     content.classList.remove('content-margin');
                     content.style.paddingLeft = '105px';
                 }
-            } else {
-                console.log(321);
             }
 
             if (y.matches) {
                 if (nav.classList.contains('nav-fixed')) {
                     nav.classList.remove('nav-fixed');
                     content.style.paddingLeft = '0';
-                } else {
-                    console.log(321);
                 }
             }
         };
@@ -215,24 +312,24 @@ const app = {
 
     handleToast: function (type) {
         if (toastMain) {
-            const delayTime = 3;
+            const delayTime = 1.5; // s
+            const showTime = 0.5;
 
             const toast = document.createElement('div');
             toast.classList.add('toast', `toast_${type.type}`);
 
-            toast.style.animation = `toastSlideIn 1s ease, toastFadeOut 1s ${delayTime}s forwards`;
+            toast.style.animation = `toastSlideIn ${showTime}s ease, toastFadeOut ${showTime}s ${delayTime}s forwards`;
 
             toast.innerHTML = `
                 <div class="toast_icon toast_icon-${type.type}">
                    <i class="fa-solid fa-${type.icon} toast_icon-img"></i>
-                   <!-- <i class="fa-solid fa-exclamation"></i> -->
                </div>
                <div class="toast_contains">
                    <div class="toast_title">
                        ${type.title}
                    </div>
                    <div class="toast_desc">
-                       ${type.findError}
+                       ${type.findReport}
                    </div>
                </div>
                 <div class="toast_close">
@@ -242,22 +339,65 @@ const app = {
             toastMain.appendChild(toast);
             setTimeout(() => {
                 toastMain.removeChild(toast);
-            }, (delayTime + 1) * 1000);
+            }, (delayTime + showTime) * 1000);
         }
     },
 
     handleClick: function () {
-        weatherIcon.addEventListener('click', () => {
-            console.log(123);
-            // this.handleToast();
+        for (let navIconItem = 1; navIconItem <= navIcon.length - 2; navIconItem++) {
+            navIcon[navIconItem].addEventListener('click', () => {
+                this.handleToast(types.update);
+            });
+        }
+
+        // toggle dark mode
+        const toggleDarkModeBtn = navIcon[5];
+        toggleDarkModeBtn.addEventListener('click', () => {
+            if (this.darkMode) {
+                this.darkMode = !this.darkMode;
+                document.body.dataset.theme = 'light';
+                console.log('Light Mode');
+            } else {
+                this.darkMode = !this.darkMode;
+                document.body.dataset.theme = 'dark';
+                console.log('Dark Mode');
+            }
         });
     },
 
+    // snowfall
+    handleSnowFall: function () {
+        if (snow) {
+            for (let index = 0; index < this.snowLength; index++) {
+                const snowDiv = document.createElement('div');
+                snowDiv.id = 's' + index;
+                snowDiv.className = `snow_flake`;
+
+                const randomLeft = Math.random() * 100;
+                const fallSpeed = Math.random() * 10 + 10;
+                const animationDelayTime = Math.random() * 10;
+                const animatePositionLeft = Math.random() * 20 - 10;
+                const animatePositionLeftEnd = Math.random() * 20 - 10;
+                const size = Math.random() * 5 * 0.25;
+
+                snowDiv.style.left = `${randomLeft}vw`;
+                snowDiv.style.animation = `snowFall ${fallSpeed}s linear infinite`;
+                snowDiv.style.animationDelay = `-${animationDelayTime}s`;
+                snowDiv.style.setProperty('--left-animate-position', animatePositionLeft + 'vw');
+                snowDiv.style.setProperty('--left-end-animate-position', animatePositionLeftEnd + 'vw');
+                snowDiv.style.setProperty('--size', size + 'vw');
+
+                snowDiv.style.filter = `blur(1px)`;
+                snow.appendChild(snowDiv);
+            }
+        }
+    },
     start: function () {
         this.render();
         this.handleInput();
         this.handleScroll();
         this.handleClick();
+        this.handleSnowFall();
     },
 };
 app.start();
