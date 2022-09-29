@@ -223,7 +223,14 @@ const app = {
                     ((data.dt - data.sys.sunrise) / (data.sys.sunset - data.sys.sunrise)) * 100,
                 );
                 timeBlockBg.style.width = `${cityCurrentTime}%`;
-                sundayIcon.style.left = `${cityCurrentTime - 4}%`;
+                const sundayWidth = cityCurrentTime - 4;
+                if (sundayWidth > 100) {
+                    sundayIcon.style.left = `81%`;
+                } else if (sundayWidth < 12) {
+                    sundayIcon.style.left = `12%`;
+                } else {
+                    sundayIcon.style.left = `${cityCurrentTime - 4}%`;
+                }
 
                 // sunrise and set;
                 const sunRiseTimeFormat = timeSun.sunrise;
@@ -242,7 +249,6 @@ const app = {
                 tomorrowDesc.innerText = statusData.description;
 
                 // chart
-
                 for (let i = 0; i <= 5; i++) {
                     const dtTime = chartList[i].dt;
                     const weatherChart = chartList[i].weather;
