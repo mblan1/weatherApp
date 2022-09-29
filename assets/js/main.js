@@ -20,6 +20,7 @@ const windDirection = $('.wind-direction');
 
 // desc
 const statusDesc = $$('.status-desc');
+const cityStatus = $('.city_status');
 
 // wind percent
 const windValue = $('.wind_value');
@@ -48,11 +49,25 @@ const chartHour = $$('.chart_hour');
 const chartItemIcon = $$('.chart_item-icon');
 const chartTemp = $$('.chart_temp');
 
+// Time Block
+const timeBlockBg = $('.timeblock_bg');
+const sunRiseTime = $('.sunrise_time-value');
+const sunSetTime = $('.sunset_time-value');
+
+const sundayIcon = $('.sunday_icon');
+
+// tomorrow forecast
+const tomorrowPosition = $('.tomorrow_position');
+const tomorrowTemp = $('.tomorrow_temp');
+const tomorrowDesc = $('.tomorrow_desc');
+
 // test
 const weatherIcon = $('.weather-icon');
 
 // snowfall
 const snow = document.getElementById('snow');
+
+console.log(sundayIcon);
 
 // toast info
 const types = {
@@ -129,12 +144,12 @@ const app = {
             })
             .then((forecastData) => {
                 // log
-                // console.group('data');
-                // console.log('data: ');
-                // console.log(data);
-                // console.log('forecast: ');
-                // console.log(forecastData);
-                // console.groupEnd();
+                console.group('data');
+                console.log('data: ');
+                console.log(data);
+                console.log('forecast: ');
+                console.log(forecastData);
+                console.groupEnd();
 
                 // props
                 const cityData = forecastData.city;
@@ -142,6 +157,7 @@ const app = {
                 const statusData = data.weather[0];
                 const windData = data.wind;
                 const chartList = forecastData.list;
+                const timeSun = data.sys;
 
                 // render city
                 countryName.innerText = cityData.name;
@@ -162,6 +178,7 @@ const app = {
                 weatherTempTitle.forEach((item) => {
                     item.innerText = statusData.description;
                 });
+                cityStatus.innerText = statusData.main;
 
                 // render bg follow weather
                 switch (statusData.main) {
@@ -200,6 +217,29 @@ const app = {
                 windValue.innerText = `${cloudPecent}%`;
                 windPercent.style.left = `calc(${cloudPecent}% - 18px)`;
                 windBlockPercent.style.width = `${cloudPecent}%`;
+
+                // time block
+                const cityCurrentTime = Math.round(
+                    ((data.dt - data.sys.sunrise) / (data.sys.sunset - data.sys.sunrise)) * 100,
+                );
+                timeBlockBg.style.width = `${cityCurrentTime}%`;
+                sundayIcon.style.left = `${cityCurrentTime - 4}%`;
+
+                // sunrise and set;
+                const sunRiseTimeFormat = timeSun.sunrise;
+                const sunSetTimeFormat = timeSun.sunset;
+                const sunRiseHour = new Date(sunRiseTimeFormat * 1000).getHours();
+                const sunRiseMinutes = new Date(sunRiseTimeFormat * 1000).getMinutes();
+                const sunSetHour = new Date(sunSetTimeFormat * 1000).getHours();
+                const sunSetMinutes = new Date(sunSetTimeFormat * 1000).getMinutes();
+
+                sunRiseTime.innerText = `0${sunRiseHour}:${sunRiseMinutes} am`;
+                sunSetTime.innerText = `${sunSetHour}:${sunSetMinutes} pm`;
+
+                // tomorrow
+                tomorrowPosition.innerText = data.name;
+                tomorrowTemp.innerHTML = `${tempDefault}<sup>o</sup>C`;
+                tomorrowDesc.innerText = statusData.description;
 
                 // chart
 
@@ -315,7 +355,7 @@ const app = {
 
     handleToast: function (type) {
         if (toastMain) {
-            const delayTime = 1.5; // s
+            const delayTime = 2; // s
             const showTime = 0.5;
 
             const toast = document.createElement('div');

@@ -65,8 +65,12 @@ body {
     background: transparent;
 }
 
+a {
+    text-decoration: none;
+}
+
 .active {
-    color: #fff;
+    color: #fff !important;
     background-color: var(--main-color);
     border-radius: 11px;
 }
