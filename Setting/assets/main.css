@@ -1,0 +1,106 @@
+.Setting {
+    display: flex;
+    width: 100%;
+    height: 700px;
+    color: white;
+}
+
+.listSetting {
+    width: 20% ; 
+    padding: 20px;
+    margin-top: 0px;
+    background-color: rgb(54, 48, 48);
+    font-size: 25px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.listSetting-items {
+    padding: 5px;
+}
+.detailSetting{
+    width: 80%;
+    margin-top: 0px;
+    background-color: rgb(66, 70, 58);
+    padding: 20px;
+    font-size: 20px;
+}
+
+#language {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px;
+    
+    
+}
+
+#location {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px;
+    
+}
+
+#time {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px;
+}
+
+#forecast {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px;
+}
+
+#notification {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px;
+}
+
+#typeTemperature {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px;
+}
+
+#email {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px;
+
+}
+
+a {
+    color:lightblue;
+}
+
+a:hover {
+    background: #a52929;
+    color: rgb(255, 255, 255);
+}
+
+#phoneNumber {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px;
+}
+
+.button {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    height: 50px;
+}
+
+.footer1 {
+    background-color: gray;
+    display: block;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 0px;
+}
+

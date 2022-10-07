@@ -7,7 +7,7 @@
     }
 }
 
-@keyframes nav-animaton {
+@keyframes nav-animation {
     from {
         transform: skewX(-25deg) translateX(-110%);
     }
